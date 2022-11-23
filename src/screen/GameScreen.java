@@ -242,9 +242,9 @@ public class GameScreen extends Screen {
 				boolean isLeftBorder = this.ship.getPositionX()
 						- this.ship.getSpeed() < 1;
 				boolean isBottomBorder = this.ship.getPositionY()
-						+ this.ship.getHeight() + this.ship.getSpeed() > this.height - 1;
+						+ this.ship.getHeight() * 2 + this.ship.getSpeed() > this.height;
 				boolean isTopBorder = this.ship.getPositionY()
-						- this.ship.getSpeed() < 1;
+						- this.ship.getSpeed() < 38;
 
 				if (moveRight && !isRightBorder) {
 					this.ship.moveRight();
