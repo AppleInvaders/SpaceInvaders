@@ -128,12 +128,22 @@ public class EnemyShip extends Entity {
 		this.pointValue = BONUS_TYPE_POINTS;
 
 	}
+
+
 	public EnemyShip (Color color) {
 		super(-32,60,16*2,7*2, color);
 
 		this.spriteType = SpriteType.EnemyShipSpecial;
 		this.isDestroyed = false;
 		this.pointValue = BONUS_TYPE_POINTS;
+	}
+
+	public EnemyShip (SpriteType spriteType) {
+		super(-32,60,16*2,7*2, Color.WHITE);
+
+		this.spriteType = SpriteType.BossShip;
+		this.isDestroyed = false;
+
 	}
 	/**
 	 * Getter for the score bonus if this ship is destroyed.
@@ -197,11 +207,8 @@ public class EnemyShip extends Entity {
 	 * Destroys the ship, causing an explosion.
 	 */
 	public final void destroy() {
-		/*this.isDestroyed = true;
-		this.spriteType = SpriteType.Explosion;*/
 		this.isDestroyed = true;
 		this.spriteType = spriteType.Explosion;
-		this.animationCooldown = Core.getCooldown(1000);
 		this.setColor(color_dead);
 	}
 
@@ -210,7 +217,7 @@ public class EnemyShip extends Entity {
 	 * 
 	 * @return True if the ship has been destroyed.
 	 */
-	public final boolean isDestroyed() {
+	public boolean isDestroyed() {
 		return this.isDestroyed;
 	}
 

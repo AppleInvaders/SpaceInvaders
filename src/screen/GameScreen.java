@@ -25,6 +25,8 @@ import engine.DrawManager;
 import entity.Shield;
 import sound.*;
 
+import static engine.DrawManager.SpriteType.BossShip;
+
 /**
  * Implements the game screen, where the action happens.
  * 
@@ -65,6 +67,8 @@ public class GameScreen extends Screen {
 	private EnemyShip enemyShipSpecial;
 	/** Dangerous enemy ship tahat appears sometimes. */
 	private EnemyShip enemyShipDangerous;
+
+	private EnemyShip bossShip;
 	/** Minimum time between bonus ship appearances. */
 	private Cooldown enemyShipSpecialCooldown;
 	/** Minimum time between dangerous ship appearances. */
@@ -73,6 +77,9 @@ public class GameScreen extends Screen {
 	private Cooldown enemyShipSpecialExplosionCooldown;
 	/** Time until bangerous ship explosion disappears. */
 	private Cooldown enemyShipdangerousExplosionCooldown;
+
+	private Cooldown bossShipCooldown;
+	private Cooldown bossShipdangerousExplosionCooldown;
 	/** Time from finishing the level to screen change. */
 	private Cooldown screenFinishedCooldown;
 	/** */
@@ -194,6 +201,12 @@ public class GameScreen extends Screen {
 		this.enemyShipdangerousExplosionCooldown = Core
 				.getCooldown(BONUS_SHIP_EXPLOSION);
 		///////////////////////////////////
+		this.bossShipCooldown = Core.getVariableCooldown(
+				BONUS_SHIP_INTERVAL, BONUS_SHIP_VARIANCE);
+		this.bossShipCooldown.reset();
+		this.bossShipdangerousExplosionCooldown = Core
+				.getCooldown(BONUS_SHIP_EXPLOSION);
+		///////////////////////////////////
 		this.screenFinishedCooldown = Core.getCooldown(SCREEN_CHANGE_INTERVAL);
 		this.bullets = new HashSet<Bullet>();
 		this.itemiterator = new HashSet<Item>();
@@ -312,6 +325,29 @@ public class GameScreen extends Screen {
 				this.logger.info("The dangerous ship has escaped and you has lost lives");
 			}
 
+
+			/** add bossShip */
+			if (this.bossShip != null) {
+				if (!this.bossShip.isDestroyed())
+					this.bossShip.move(3, 2);
+				else if (this.bossShipdangerousExplosionCooldown.checkFinished())
+					this.bossShip = null;
+
+			}
+			if (this.bossShip == null
+					&& this.bossShipCooldown.checkFinished()) {
+				this.bossShip = new EnemyShip(BossShip);
+				this.bossShipCooldown.reset();
+				this.logger.info("A boss ship appears");
+			}
+			if (this.bossShip != null
+					&& this.bossShip.getPositionX() > this.width) {
+				this.lives--;
+				this.bossShip = null;
+				this.logger.info("The boss ship has escaped and you has lost lives");
+			}
+
+
 			this.ship.update();
 			this.enemyShipFormation.update();
 			this.enemyShipFormation.shoot(this.bullets);
@@ -363,6 +399,13 @@ public class GameScreen extends Screen {
 			drawManager.drawEntity(this.enemyShipDangerous,
 					this.enemyShipDangerous.getPositionX(),
 					this.enemyShipDangerous.getPositionY());
+
+		if (this.bossShip != null)
+			drawManager.drawEntity(this.bossShip,
+					this.bossShip.getPositionX(),
+					this.bossShip.getPositionY());
+
+
 		if (shield != null) {
 			drawManager.drawEntity(shield, shield.getPositionX(), shield.getPositionY());
 		}
@@ -490,6 +533,17 @@ public class GameScreen extends Screen {
 					this.shipsDestroyed++;
 					this.enemyShipDangerous.destroy();
 					this.enemyShipdangerousExplosionCooldown.reset();
+					recyclable.add(bullet);
+				}
+
+				if (this.bossShip != null
+						&& !this.bossShip.isDestroyed()
+						&& checkCollision(bullet, this.bossShip)) {
+					SoundPlay.getInstance().play(SoundType.bonusEnemyKill);
+					//this.score += this.bossShip.getPointValue();
+					this.shipsDestroyed++;
+					this.bossShip.destroy();
+					this.bossShipdangerousExplosionCooldown.reset();
 					recyclable.add(bullet);
 				}
 			}

@@ -51,6 +51,12 @@ public class Bullet extends Entity {
 		}
 	}
 
+	public final void bossSprite() {
+		this.spriteType = SpriteType.BossBullet;
+		this.setColor(Color.WHITE);
+	}
+
+
 	/**
 	 * Updates the bullet's position.
 	 */
