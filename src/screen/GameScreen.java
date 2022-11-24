@@ -329,7 +329,7 @@ public class GameScreen extends Screen {
 			/** add bossShip */
 			if (this.bossShip != null) {
 				if (!this.bossShip.isDestroyed())
-					this.bossShip.move(3, 2);
+					this.bossShip.move(3, 0);
 				else if (this.bossShipdangerousExplosionCooldown.checkFinished())
 					this.bossShip = null;
 
