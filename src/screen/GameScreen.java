@@ -218,7 +218,58 @@ public class GameScreen extends Screen {
 		this.logger.info("Screen cleared with a score of " + this.score); // 정상 출력
 		return this.returnCode;
 	}
+	/**
+	 * Ship moving control method.
+	 */
+	private final void moving() {
+		boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT)
+				|| inputManager.isKeyDown(KeyEvent.VK_D);
+		boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT)
+				|| inputManager.isKeyDown(KeyEvent.VK_A);
+		boolean moveTop = inputManager.isKeyDown(KeyEvent.VK_UP)
+				|| inputManager.isKeyDown(KeyEvent.VK_D);
+		boolean moveBottom = inputManager.isKeyDown(KeyEvent.VK_DOWN)
+				|| inputManager.isKeyDown(KeyEvent.VK_A);
 
+		boolean isRightBorder = this.ship.getPositionX()
+				+ this.ship.getWidth() + this.ship.getSpeed() > this.width - 1;
+		boolean isLeftBorder = this.ship.getPositionX()
+				- this.ship.getSpeed() < 1;
+		boolean isBottomBorder = this.ship.getPositionY()
+				+ this.ship.getHeight() * 2 + this.ship.getSpeed() > this.height;
+		boolean isTopBorder = this.ship.getPositionY()
+				- this.ship.getSpeed() < 38;
+
+		if (moveRight && !isRightBorder) {
+			this.ship.moveRight();
+			if (shield != null)
+				shield.moveRight();
+		}
+		else if (moveLeft && !isLeftBorder) {
+			this.ship.moveLeft();
+			if (shield != null)
+				shield.moveLeft();
+		}
+		if (moveTop && !isTopBorder) {
+			this.ship.moveTop();
+			if (shield != null)
+				shield.moveTop();
+		}
+		else if (moveBottom && !isBottomBorder) {
+			this.ship.moveBottom();
+			if (shield != null)
+				shield.moveBottom();
+		}
+	}
+
+	/**
+	 * Ship shooting control method.
+	 */
+	private final void shooting() {
+		if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
+			if (this.ship.shoot(this.bullets))
+				this.bulletsShot++;
+	}
 	/**
 	 * Updates the elements on screen and checks for events.
 	 */
@@ -228,48 +279,8 @@ public class GameScreen extends Screen {
 		if (this.inputDelay.checkFinished() && !this.levelFinished) {
 
 			if (!this.ship.isDestroyed()) {
-				boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT)
-						|| inputManager.isKeyDown(KeyEvent.VK_D);
-				boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT)
-						|| inputManager.isKeyDown(KeyEvent.VK_A);
-				boolean moveTop = inputManager.isKeyDown(KeyEvent.VK_UP)
-						|| inputManager.isKeyDown(KeyEvent.VK_D);
-				boolean moveBottom = inputManager.isKeyDown(KeyEvent.VK_DOWN)
-						|| inputManager.isKeyDown(KeyEvent.VK_A);
-
-				boolean isRightBorder = this.ship.getPositionX()
-						+ this.ship.getWidth() + this.ship.getSpeed() > this.width - 1;
-				boolean isLeftBorder = this.ship.getPositionX()
-						- this.ship.getSpeed() < 1;
-				boolean isBottomBorder = this.ship.getPositionY()
-						+ this.ship.getHeight() * 2 + this.ship.getSpeed() > this.height;
-				boolean isTopBorder = this.ship.getPositionY()
-						- this.ship.getSpeed() < 38;
-
-				if (moveRight && !isRightBorder) {
-					this.ship.moveRight();
-					if (shield != null)
-						shield.moveRight();
-				}
-				if (moveLeft && !isLeftBorder) {
-					this.ship.moveLeft();
-					if (shield != null)
-						shield.moveLeft();
-				}
-				if (moveTop && !isTopBorder) {
-					this.ship.moveTop();
-					if (shield != null)
-						shield.moveTop();
-				}
-				if (moveBottom && !isBottomBorder) {
-					this.ship.moveBottom();
-					if (shield != null)
-						shield.moveBottom();
-				}
-
-				if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
-					if (this.ship.shoot(this.bullets))
-						this.bulletsShot++;
+				this.moving();
+				this.shooting();
 			}
 
 			if (this.enemyShipSpecial != null) {
