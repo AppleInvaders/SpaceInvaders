@@ -29,9 +29,9 @@ import static engine.DrawManager.SpriteType.BossShip;
 
 /**
  * Implements the game screen, where the action happens.
- * 
+ *
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
- * 
+ *
  */
 public class GameScreen extends Screen {
 
@@ -114,9 +114,11 @@ public class GameScreen extends Screen {
 
 	private int past_countdown=4;
 
+	protected DrawManager.SpriteType spriteType;
+
 	/**
 	 * Constructor, establishes the properties of the screen.
-	 * 
+	 *
 	 * @param gameState
 	 *                     Current game state.
 	 * @param gameSettings
@@ -131,8 +133,8 @@ public class GameScreen extends Screen {
 	 *                     Frames per second, frame rate at which the game is run.
 	 */
 	public GameScreen(final GameState gameState,
-			final GameSettings gameSettings, final boolean bonusLife,
-			final int width, final int height, final int fps) {
+					  final GameSettings gameSettings, final boolean bonusLife,
+					  final int width, final int height, final int fps) {
 		super(width, height, fps);
 
 		this.gameSettings = gameSettings;
@@ -220,7 +222,7 @@ public class GameScreen extends Screen {
 
 	/**
 	 * Starts the action.
-	 * 
+	 *
 	 * @return Next screen code.
 	 */
 	public final int run() {
@@ -364,6 +366,34 @@ public class GameScreen extends Screen {
 			this.enemyShipFormation.shoot(this.bullets);
 
 		}
+
+		if (this.bossShipCooldown.checkFinished()) {
+			this.bossShipdangerousExplosionCooldown.reset();
+
+			switch (this.spriteType) {
+				case BossShip:
+					this.spriteType = DrawManager.SpriteType.BossStrengthBar1;
+					break;
+				case BossStrengthBar1:
+					this.spriteType = DrawManager.SpriteType.BossStrengthBar2;
+					break;
+				case BossStrengthBar2:
+					this.spriteType = DrawManager.SpriteType.BossStrengthBar3;
+					break;
+				case BossStrengthBar3:
+					this.spriteType = DrawManager.SpriteType.BossStrengthBar4;
+					break;
+				case BossStrengthBar4:
+					this.spriteType = DrawManager.SpriteType.BossStrengthBar5;
+					break;
+				case BossStrengthBar5:
+					this.spriteType = DrawManager.SpriteType.BossStrengthBar6;
+					break;
+				default:
+					break;
+			}
+		}
+
 		for (Item item : this.itemiterator) {
 			if (item != null) {
 				manageGetItem(item);
@@ -443,7 +473,7 @@ public class GameScreen extends Screen {
 		if (!this.inputDelay.checkFinished()) {
 			int countdown = (int) ((INPUT_DELAY
 					- (System.currentTimeMillis()
-							- this.gameStartTime))
+					- this.gameStartTime))
 					/ 1000);
 			drawManager.drawCountDown(this, this.level, countdown,
 					this.bonusLife);
@@ -501,7 +531,7 @@ public class GameScreen extends Screen {
 						this.lives--;
 						this.logger.info("Hit on player ship, " + this.lives
 								+ " lives remaining.");
-							this.clearItem();
+						this.clearItem();
 
 					} else if (!this.ship.isDestroyed()) {
 						shield = null;
@@ -564,7 +594,7 @@ public class GameScreen extends Screen {
 
 	/**
 	 * Checks if two entities are colliding.
-	 * 
+	 *
 	 * @param a
 	 *          First entity, the bullet.
 	 * @param b
@@ -589,7 +619,7 @@ public class GameScreen extends Screen {
 
 	/**
 	 * Returns a GameState object representing the status of the game.
-	 * 
+	 *
 	 * @return Current game state.
 	 */
 	public final GameState getGameState() {

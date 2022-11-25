@@ -56,6 +56,8 @@ public final class DrawManager {
 
 	Color[] colors = {Color.gray, Color.darkGray, Color.black};
 
+
+
 	/** Sprite types. */
 	public static enum SpriteType {
 		/** Player ship. */
@@ -82,6 +84,20 @@ public final class DrawManager {
 		EnemyShipSpecial,
 		/** Boss Ship. */
 		BossShip,
+		BossStrengthBar1,
+		BossStrengthBar2,
+		BossStrengthBar3,
+		BossStrengthBar4,
+		BossStrengthBar5,
+		BossStrengthBar6,
+		BossStrengthBar7,
+		BossStrengthBar8,
+		BossStrengthBar9,
+		BossStrengthBar10,
+		BossStrengthBar11,
+		BossStrengthBar12,
+		BossStrengthBar13,
+		BossStrengthBar14,
 
 		BossBullet,
 		/** Destroyed enemy ship. */
@@ -123,8 +139,21 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.EnemyShipC1, new boolean[12][8]);
 			spriteMap.put(SpriteType.EnemyShipC2, new boolean[12][8]);
 			spriteMap.put(SpriteType.EnemyShipSpecial,new boolean[16][7]);
-			spriteMap.put(SpriteType.BossShip, new boolean[15][11]);
-
+			spriteMap.put(SpriteType.BossShip, new boolean[15][15]);
+			spriteMap.put(SpriteType.BossStrengthBar1, new boolean[15][15]);
+			spriteMap.put(SpriteType.BossStrengthBar2, new boolean[15][15]);
+			spriteMap.put(SpriteType.BossStrengthBar3, new boolean[15][15]);
+			spriteMap.put(SpriteType.BossStrengthBar4, new boolean[15][15]);
+			spriteMap.put(SpriteType.BossStrengthBar5, new boolean[15][15]);
+			spriteMap.put(SpriteType.BossStrengthBar6, new boolean[15][15]);
+			spriteMap.put(SpriteType.BossStrengthBar7, new boolean[15][15]);
+			spriteMap.put(SpriteType.BossStrengthBar8, new boolean[15][15]);
+			spriteMap.put(SpriteType.BossStrengthBar9, new boolean[15][15]);
+			spriteMap.put(SpriteType.BossStrengthBar10, new boolean[15][15]);
+			spriteMap.put(SpriteType.BossStrengthBar11, new boolean[15][15]);
+			spriteMap.put(SpriteType.BossStrengthBar12, new boolean[15][15]);
+			spriteMap.put(SpriteType.BossStrengthBar13, new boolean[15][15]);
+			spriteMap.put(SpriteType.BossStrengthBar14, new boolean[15][15]); //27
 			spriteMap.put(SpriteType.Explosion, new boolean[13][7]);
 			spriteMap.put(SpriteType.ItemDrop, new boolean[9][9]);
 			spriteMap.put(SpriteType.ItemGet, new boolean[5][5]);
