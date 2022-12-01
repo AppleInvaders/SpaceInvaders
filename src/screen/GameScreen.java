@@ -180,7 +180,11 @@ public class GameScreen extends Screen {
 		itemmanager.assignHasItem(enemyShipFormation);
 		enemyShipFormation.attach(this);
 		int playerShipShape = FileManager.getPlayerShipShape();
-		this.ship2 = new Ship(this.width / 2, this.height - 30, FileManager.ChangeIntToColor());
+
+		if (this.isTwoPlayer) {
+			this.ship2 = new Ship(this.width / 2, this.height - 30, Color.yellow);
+		}
+
 		switch (playerShipShape) {
 			case 0:
 				this.ship = new Ship(this.width / 2, this.height - 30, FileManager.ChangeIntToColor());
@@ -365,7 +369,9 @@ public class GameScreen extends Screen {
 
 
 			this.ship.update();
-			this.ship2.update();
+			if(isTwoPlayer) {
+				this.ship2.update();
+			}
 			this.enemyShipFormation.update();
 			this.enemyShipFormation.shoot(this.bullets);
 
@@ -435,8 +441,11 @@ public class GameScreen extends Screen {
 		}
 		drawManager.drawEntity(this.ship, this.ship.getPositionX(),
 				this.ship.getPositionY());
-		drawManager.drawEntity(this.ship2, this.ship2.getPositionX(),
-				this.ship2.getPositionY());
+		if (this.isTwoPlayer) {
+			drawManager.drawEntity(this.ship2, this.ship2.getPositionX(),
+					this.ship2.getPositionY());
+		}
+
 		if (this.enemyShipSpecial != null)
 			drawManager.drawEntity(this.enemyShipSpecial,
 					this.enemyShipSpecial.getPositionX(),
