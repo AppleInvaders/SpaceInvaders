@@ -298,23 +298,23 @@ public class GameScreen extends Screen {
 
 			if (moveRight2 && !isRightBorder2) {
 				this.ship2.moveRight();
-				if (shield != null)
-					shield.moveRight();
+//				if (shield != null)
+//					shield.moveRight();
 			}
 			else if (moveLeft2 && !isLeftBorder2) {
 				this.ship2.moveLeft();
-				if (shield != null)
-					shield.moveLeft();
+//				if (shield != null)
+//					shield.moveLeft();
 			}
 			if (moveTop2 && !isTopBorder2) {
 				this.ship2.moveTop();
-				if (shield != null)
-					shield.moveTop();
+//				if (shield != null)
+//					shield.moveTop();
 			}
 			else if (moveBottom2 && !isBottomBorder2) {
 				this.ship2.moveBottom();
-				if (shield != null)
-					shield.moveBottom();
+//				if (shield != null)
+//					shield.moveBottom();
 			}
 		}
 
@@ -577,13 +577,13 @@ public class GameScreen extends Screen {
 		Set<Bullet> recyclable = new HashSet<Bullet>();
 		for (Bullet bullet : this.bullets)
 			if (bullet.getSpeed() > 0) {
-				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
+				if ((checkCollision(bullet, this.ship) || checkCollision(bullet, this.ship2)) && !this.levelFinished) {
 					recyclable.add(bullet);
-					// 아직 추가 안함.
 
 					if (shield == null && !this.ship.isDestroyed()) {
 						SoundPlay.getInstance().play(SoundType.hit);
 						this.ship.destroy();
+						this.ship2.destroy();
 						this.lives--;
 						this.logger.info("Hit on player ship, " + this.lives
 								+ " lives remaining.");
