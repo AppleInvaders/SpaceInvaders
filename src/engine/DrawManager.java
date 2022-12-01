@@ -998,6 +998,7 @@ public final class DrawManager {
 				drawEntity(new Ship(0, 0, 0, FileManager.ChangeIntToColor()), screen.getWidth() / 2 + 89, screen.getHeight() / 2 + 42);
 			if (permanentState.getShipColor() == 2)
 				drawEntity(new Ship(0, 0, '0', FileManager.ChangeIntToColor()), screen.getWidth() / 2 + 89, screen.getHeight() / 2 + 42);
+
 		}
 		else if(menu == 2){ // bullet sfx
 			backBufferGraphics.setFont(fontBig);

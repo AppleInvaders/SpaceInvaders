@@ -2,6 +2,7 @@ package screen;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -63,6 +64,7 @@ public class GameScreen extends Screen {
 	private EnemyShipFormation enemyShipFormation;
 	/** Player's ship. */
 	private Ship ship;
+	private Ship ship2;
 	/** Bonus enemy ship that appears sometimes. */
 	private EnemyShip enemyShipSpecial;
 	/** Dangerous enemy ship tahat appears sometimes. */
@@ -178,6 +180,7 @@ public class GameScreen extends Screen {
 		itemmanager.assignHasItem(enemyShipFormation);
 		enemyShipFormation.attach(this);
 		int playerShipShape = FileManager.getPlayerShipShape();
+		this.ship2 = new Ship(this.width / 2, this.height - 30, FileManager.ChangeIntToColor());
 		switch (playerShipShape) {
 			case 0:
 				this.ship = new Ship(this.width / 2, this.height - 30, FileManager.ChangeIntToColor());
@@ -237,14 +240,11 @@ public class GameScreen extends Screen {
 	 * Ship moving control method.
 	 */
 	private final void moving() {
-		boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT)
-				|| inputManager.isKeyDown(KeyEvent.VK_D);
-		boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT)
-				|| inputManager.isKeyDown(KeyEvent.VK_A);
-		boolean moveTop = inputManager.isKeyDown(KeyEvent.VK_UP)
-				|| inputManager.isKeyDown(KeyEvent.VK_D);
-		boolean moveBottom = inputManager.isKeyDown(KeyEvent.VK_DOWN)
-				|| inputManager.isKeyDown(KeyEvent.VK_A);
+		// Player 1
+		boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT);
+		boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT);
+		boolean moveTop = inputManager.isKeyDown(KeyEvent.VK_UP);
+		boolean moveBottom = inputManager.isKeyDown(KeyEvent.VK_DOWN);
 
 		boolean isRightBorder = this.ship.getPositionX()
 				+ this.ship.getWidth() + this.ship.getSpeed() > this.width - 1;
@@ -275,6 +275,9 @@ public class GameScreen extends Screen {
 			if (shield != null)
 				shield.moveBottom();
 		}
+
+
+
 	}
 
 	/**
@@ -362,6 +365,7 @@ public class GameScreen extends Screen {
 
 
 			this.ship.update();
+			this.ship2.update();
 			this.enemyShipFormation.update();
 			this.enemyShipFormation.shoot(this.bullets);
 
@@ -431,6 +435,8 @@ public class GameScreen extends Screen {
 		}
 		drawManager.drawEntity(this.ship, this.ship.getPositionX(),
 				this.ship.getPositionY());
+		drawManager.drawEntity(this.ship2, this.ship2.getPositionX(),
+				this.ship2.getPositionY());
 		if (this.enemyShipSpecial != null)
 			drawManager.drawEntity(this.enemyShipSpecial,
 					this.enemyShipSpecial.getPositionX(),
@@ -523,7 +529,7 @@ public class GameScreen extends Screen {
 			if (bullet.getSpeed() > 0) {
 				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
 					recyclable.add(bullet);
-
+					// 아직 추가 안함.
 
 					if (shield == null && !this.ship.isDestroyed()) {
 						SoundPlay.getInstance().play(SoundType.hit);
@@ -629,7 +635,7 @@ public class GameScreen extends Screen {
 
 	private void manageGetItem(Item item) {
 		if (checkCollision(item, this.ship) && !this.levelFinished) {
-
+			// 아직 추가 안함
 			itempool.add(item);
 			item.setSprite();
 
