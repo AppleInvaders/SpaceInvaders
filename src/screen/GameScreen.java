@@ -276,7 +276,41 @@ public class GameScreen extends Screen {
 				shield.moveBottom();
 		}
 
+		// Player 2
+		boolean moveRight2 = inputManager.isKeyDown(KeyEvent.VK_D);
+		boolean moveLeft2 = inputManager.isKeyDown(KeyEvent.VK_A);
+		boolean moveTop2 = inputManager.isKeyDown(KeyEvent.VK_W);
+		boolean moveBottom2 = inputManager.isKeyDown(KeyEvent.VK_S);
 
+		boolean isRightBorder2 = this.ship2.getPositionX()
+				+ this.ship2.getWidth() + this.ship2.getSpeed() > this.width - 1;
+		boolean isLeftBorder2 = this.ship2.getPositionX()
+				- this.ship2.getSpeed() < 1;
+		boolean isBottomBorder2 = this.ship2.getPositionY()
+				+ this.ship2.getHeight() * 2 + this.ship.getSpeed() > this.height;
+		boolean isTopBorder2 = this.ship2.getPositionY()
+				- this.ship2.getSpeed() < 38;
+
+		if (moveRight2 && !isRightBorder2) {
+			this.ship2.moveRight();
+			if (shield != null)
+				shield.moveRight();
+		}
+		else if (moveLeft2 && !isLeftBorder2) {
+			this.ship2.moveLeft();
+			if (shield != null)
+				shield.moveLeft();
+		}
+		if (moveTop2 && !isTopBorder2) {
+			this.ship2.moveTop();
+			if (shield != null)
+				shield.moveTop();
+		}
+		else if (moveBottom2 && !isBottomBorder2) {
+			this.ship2.moveBottom();
+			if (shield != null)
+				shield.moveBottom();
+		}
 
 	}
 
