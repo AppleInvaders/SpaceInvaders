@@ -40,7 +40,7 @@ public class EnemyShip extends Entity {
 	private final int ITEM_SPEED = 2;
 
 	/** lives of the boss. */
-	public int bossLives = 2;
+	public int bossLives = 3;
 
 	/**
 	 * Constructor, establishes the ship's properties.
