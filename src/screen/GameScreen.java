@@ -551,7 +551,7 @@ public class GameScreen extends Screen {
 						&& !this.bossShip.isDestroyed()
 						&& checkCollision(bullet, this.bossShip)) {
 					SoundPlay.getInstance().play(SoundType.bonusEnemyKill);
-					//this.score += this.bossShip.getPointValue();
+					this.score += this.bossShip.getPointValue();
 					this.shipsDestroyed++;
 					this.bossShip.destroy();
 					this.bossShipdangerousExplosionCooldown.reset();

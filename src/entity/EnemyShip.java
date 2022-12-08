@@ -30,6 +30,7 @@ public class EnemyShip extends Entity {
 	private static final int C_TYPE_POINTS = 30;
 	/** Point value of a bonus enemy. */
 	private static final int BONUS_TYPE_POINTS = 100;
+	private static final int BOSS_TYPE_POINTS = 300;
 	/** Cooldown between sprite changes. */
 	private Cooldown animationCooldown;
 	/** Checks if the ship has been hit by a bullet. */
@@ -143,7 +144,7 @@ public class EnemyShip extends Entity {
 
 		this.spriteType = SpriteType.BossShip;
 		this.isDestroyed = false;
-
+		this.pointValue = BOSS_TYPE_POINTS;
 	}
 	/**
 	 * Getter for the score bonus if this ship is destroyed.
@@ -226,6 +227,8 @@ public class EnemyShip extends Entity {
 		else if(this.spriteType == spriteType.EnemyShipB1 || this.spriteType == spriteType.EnemyShipB2) setPointValue(B_TYPE_POINTS);
 		else if(this.spriteType == spriteType.EnemyShipC1 || this.spriteType == spriteType.EnemyShipC2) setPointValue(C_TYPE_POINTS);
 		else if(this.spriteType == spriteType.EnemyShipSpecial) setPointValue(BONUS_TYPE_POINTS);
+		else if(this.spriteType == spriteType.EnemyShipC2);
+		else if(this.spriteType == spriteType.BossShip) setPointValue(BOSS_TYPE_POINTS);
 	}
 }
 
