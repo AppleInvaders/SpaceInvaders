@@ -13,7 +13,7 @@ public final class BulletPool {
 
 	/** Set of already created bullets. */
 	private static Set<Bullet> pool = new HashSet<Bullet>();
-
+	private static Set<BossBullet> pool_1 = new HashSet<BossBullet>();
 	/**
 	 * Constructor, not called.
 	 */
@@ -51,6 +51,23 @@ public final class BulletPool {
 		return bullet;
 	}
 
+	public static BossBullet getBossBullet(final int positionX,
+								   final int positionY, final int speed) {
+		BossBullet boss_bullet;
+		if (!pool_1.isEmpty()) {
+			boss_bullet = pool_1.iterator().next();
+			pool_1.remove(boss_bullet);
+			boss_bullet.setPositionX(positionX - boss_bullet.getWidth() / 2);
+			boss_bullet.setPositionY(positionY);
+			boss_bullet.setSpeed(speed);
+			boss_bullet.setSprite();
+		} else {
+			boss_bullet = new BossBullet(positionX, positionY, speed);
+			boss_bullet.setPositionX(positionX - boss_bullet.getWidth() / 2);
+		}
+		return boss_bullet;
+	}
+
 	/**
 	 * Adds one or more bullets to the list of available ones.
 	 * 
@@ -59,5 +76,8 @@ public final class BulletPool {
 	 */
 	public static void recycle(final Set<Bullet> bullet) {
 		pool.addAll(bullet);
+	}
+	public static void recycle_boss(final Set<BossBullet> boss_bullet) {
+		pool_1.addAll(boss_bullet);
 	}
 }

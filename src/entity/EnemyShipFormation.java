@@ -225,7 +225,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 			Current_Level = gameSettings.getLevel();
 			for (int i = 0; i < this.nShipsHigh; i++) {
 				if (gameSettings.getLevel() == 8)
-					spriteType = SpriteType.EnemyShipSpecial;
+					spriteType = SpriteType.BossShip;
 				else if (i / (float) this.nShipsHigh < PROPORTION_C)
 					spriteType = SpriteType.EnemyShipC1;
 				else if (i / (float) this.nShipsHigh < PROPORTION_B
@@ -487,6 +487,32 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		}
 	}
 
+
+	public final void Boss_shoot(final Set<BossBullet> boss_bullets) { //new
+		// For now, only ships in the bottom row are able to shoot.
+		int index = (int) (Math.random() * this.shooters.size());
+		EnemyShip boss_shooter = this.shooters.get(index);
+
+		switch (boss_shooter.spriteType) {
+			case BossShip:
+			case BossStrengthBar8:
+			case BossStrengthBar14:
+				if (this.shootingCooldown.checkFinished()) {
+					this.shootingCooldown.reset();
+					boss_bullets.add(BulletPool.getBossBullet(boss_shooter.getPositionX()
+							+ boss_shooter.width / 2, boss_shooter.getPositionY(), 4));
+				}
+				break;
+			default:
+				if (this.shootingCooldown.checkFinished()) {
+					this.shootingCooldown.reset();
+					boss_bullets.add(BulletPool.getBossBullet(boss_shooter.getPositionX()
+							+ boss_shooter.width / 2, boss_shooter.getPositionY(), Current_Level));
+				}
+				break;
+		}
+	}
+
 	/**
 	 * Destroys a ship.
 	 *
@@ -496,9 +522,15 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		for (List<EnemyShip> column : this.enemyShips)
 			for (int i = 0; i < column.size(); i++)
 				if (column.get(i).equals(destroyedShip)) {
-					if(this.Current_Level == 8) {
+					if(this.Current_Level == 8) { //new
 						destroyedShip.bossLives--;
-						if (destroyedShip.bossLives == 0) {
+						if (destroyedShip.bossLives == 2) {
+							destroyedShip.spriteType = SpriteType.BossStrengthBar8;
+						}
+						else if (destroyedShip.bossLives == 1) {
+							destroyedShip.spriteType = SpriteType.BossStrengthBar14;
+						}
+						else {
 							column.get(i).destroy();
 							this.shipCount--;
 						}

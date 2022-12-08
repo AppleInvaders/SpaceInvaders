@@ -70,7 +70,6 @@ public class GameScreen extends Screen {
 	/** Dangerous enemy ship tahat appears sometimes. */
 	private EnemyShip enemyShipDangerous;
 
-	private EnemyShip bossShip;
 	/** Minimum time between bonus ship appearances. */
 	private Cooldown enemyShipSpecialCooldown;
 	/** Minimum time between dangerous ship appearances. */
@@ -80,14 +79,13 @@ public class GameScreen extends Screen {
 	/** Time until bangerous ship explosion disappears. */
 	private Cooldown enemyShipdangerousExplosionCooldown;
 
-	private Cooldown bossShipCooldown;
-	private Cooldown bossShipdangerousExplosionCooldown;
 	/** Time from finishing the level to screen change. */
 	private Cooldown screenFinishedCooldown;
 	/** */
 	private Cooldown itemInfoCooldown;
 	/** Set of all bullets fired by on screen ships. */
 	private Set<Bullet> bullets;
+	private Set<BossBullet> boss_bullets;
 	/** Current score. */
 	private int score;
 	/** Player lives left. */
@@ -210,14 +208,10 @@ public class GameScreen extends Screen {
 		this.enemyShipdangerousExplosionCooldown = Core
 				.getCooldown(BONUS_SHIP_EXPLOSION);
 		///////////////////////////////////
-		this.bossShipCooldown = Core.getVariableCooldown(
-				BONUS_SHIP_INTERVAL, BONUS_SHIP_VARIANCE);
-		this.bossShipCooldown.reset();
-		this.bossShipdangerousExplosionCooldown = Core
-				.getCooldown(BONUS_SHIP_EXPLOSION);
 		///////////////////////////////////
 		this.screenFinishedCooldown = Core.getCooldown(SCREEN_CHANGE_INTERVAL);
 		this.bullets = new HashSet<Bullet>();
+		this.boss_bullets = new HashSet<BossBullet>(); //new
 		this.itemiterator = new HashSet<Item>();
 		// Special input delay / countdown.
 		this.gameStartTime = System.currentTimeMillis();
@@ -387,38 +381,23 @@ public class GameScreen extends Screen {
 			}
 
 
-			/** add bossShip */
-			if (this.bossShip != null) {
-				if (!this.bossShip.isDestroyed())
-					this.bossShip.move(3, 0);
-				else if (this.bossShipdangerousExplosionCooldown.checkFinished())
-					this.bossShip = null;
-
-			}
-			if (this.bossShip == null
-					&& this.bossShipCooldown.checkFinished()) {
-				this.bossShip = new EnemyShip(BossShip);
-				this.bossShipCooldown.reset();
-				this.logger.info("A boss ship appears");
-			}
-			if (this.bossShip != null
-					&& this.bossShip.getPositionX() > this.width) {
-				this.lives--;
-				this.bossShip = null;
-				this.logger.info("The boss ship has escaped and you has lost lives");
-			}
-
-
 			this.ship.update();
 			if(isTwoPlayer) {
 				this.ship2.update();
 			}
 			this.enemyShipFormation.update();
-			this.enemyShipFormation.shoot(this.bullets);
+			switch (level){
+				case 8:
+					this.enemyShipFormation.Boss_shoot(this.boss_bullets);
+					break;
+				default:
+					this.enemyShipFormation.shoot(this.bullets);
+					break;
+			}
 
 		}
 
-		if (this.bossShipCooldown.checkFinished()) {
+		/*if (this.bossShipCooldown.checkFinished()) {
 			this.bossShipdangerousExplosionCooldown.reset();
 
 			switch (this.spriteType) {
@@ -443,7 +422,7 @@ public class GameScreen extends Screen {
 				default:
 					break;
 			}
-		}
+		}*/
 
 		for (Item item : this.itemiterator) {
 			if (item != null) {
@@ -451,7 +430,9 @@ public class GameScreen extends Screen {
 			}
 		}
 		manageCollisions();
+		boss_manageCollisions();
 		cleanItems();
+		cleanBossBullets();
 		cleanBullets();
 		draw();
 		if ((this.enemyShipFormation.isEmpty() || this.lives == 0)
@@ -497,10 +478,6 @@ public class GameScreen extends Screen {
 					this.enemyShipDangerous.getPositionX(),
 					this.enemyShipDangerous.getPositionY());
 
-		if (this.bossShip != null)
-			drawManager.drawEntity(this.bossShip,
-					this.bossShip.getPositionX(),
-					this.bossShip.getPositionY());
 
 
 		if (shield != null) {
@@ -518,6 +495,10 @@ public class GameScreen extends Screen {
 		for (Bullet bullet : this.bullets)
 			drawManager.drawEntity(bullet, bullet.getPositionX(),
 					bullet.getPositionY());
+
+		for (BossBullet boss_bullet : this.boss_bullets)
+			drawManager.drawEntity(boss_bullet, boss_bullet.getPositionX(),
+					boss_bullet.getPositionY());
 
 		// Interface.
 		drawManager.drawLevels(this, this.level);
@@ -570,6 +551,17 @@ public class GameScreen extends Screen {
 		BulletPool.recycle(recyclable);
 	}
 
+	private void cleanBossBullets() {
+		Set<BossBullet> recyclable_boss = new HashSet<BossBullet>();
+		for (BossBullet boss_bullet : this.boss_bullets) {
+			boss_bullet.update();
+			if (boss_bullet.getPositionY() < SEPARATION_LINE_HEIGHT
+					|| boss_bullet.getPositionY() > this.height)
+				recyclable_boss.add(boss_bullet);
+		}
+		this.boss_bullets.removeAll(recyclable_boss);
+		BulletPool.recycle_boss(recyclable_boss);
+	}
 	/**
 	 * Manages collisions between bullets and ships.
 	 */
@@ -633,21 +625,86 @@ public class GameScreen extends Screen {
 					recyclable.add(bullet);
 				}
 
-				if (this.bossShip != null
-						&& !this.bossShip.isDestroyed()
-						&& checkCollision(bullet, this.bossShip)) {
-					SoundPlay.getInstance().play(SoundType.bonusEnemyKill);
-					//this.score += this.bossShip.getPointValue();
-					this.shipsDestroyed++;
-					this.bossShip.destroy();
-					this.bossShipdangerousExplosionCooldown.reset();
-					recyclable.add(bullet);
-				}
 			}
 		this.bullets.removeAll(recyclable);
 		BulletPool.recycle(recyclable);
 	}
 
+
+	private void boss_manageCollisions() {
+		Set<BossBullet> recyclable_boss = new HashSet<BossBullet>();
+		for (BossBullet boss_bullet : this.boss_bullets)
+			if (boss_bullet.getSpeed() > 0) {
+				if ((checkCollision(boss_bullet, this.ship) || checkCollision(boss_bullet, this.ship2)) && !this.levelFinished) {
+					recyclable_boss.add(boss_bullet);
+
+					if (shield == null && !this.ship.isDestroyed()) {
+						SoundPlay.getInstance().play(SoundType.hit);
+						this.ship.destroy();
+						this.ship2.destroy();
+						this.lives--;
+						this.logger.info("Hit on player ship, " + this.lives
+								+ " lives remaining.");
+						this.clearItem();
+
+					} else if (!this.ship.isDestroyed()) {
+						shield = null;
+					}
+				}
+			} else {
+				for (EnemyShip enemyShip : this.enemyShipFormation)
+					if (!enemyShip.isDestroyed()
+							&& checkCollision(boss_bullet, enemyShip)) {
+						SoundPlay.getInstance().play(SoundType.enemyKill);
+						this.score += enemyShip.getPointValue();
+						this.shipsDestroyed++;
+
+						if (enemyShip.getItemType() != null) {
+							enemyShip.itemDrop(itemiterator);
+							for (Item item : this.itemiterator)
+								if (item != null)
+									item.setSprite();
+						}
+
+						this.enemyShipFormation.destroy(enemyShip);
+						recyclable_boss.add(boss_bullet);
+					}
+				if (this.enemyShipSpecial != null
+						&& !this.enemyShipSpecial.isDestroyed()
+						&& checkCollision(boss_bullet, this.enemyShipSpecial)) {
+					SoundPlay.getInstance().play(SoundType.bonusEnemyKill);
+					this.score += this.enemyShipSpecial.getPointValue();
+
+					this.shipsDestroyed++;
+					this.enemyShipSpecial.destroy();
+					this.enemyShipSpecialExplosionCooldown.reset();
+					recyclable_boss.add(boss_bullet);
+				}
+				if (this.enemyShipDangerous != null
+						&& !this.enemyShipDangerous.isDestroyed()
+						&& checkCollision(boss_bullet, this.enemyShipDangerous)) {
+					SoundPlay.getInstance().play(SoundType.bonusEnemyKill);
+					this.score += this.enemyShipDangerous.getPointValue();
+					this.shipsDestroyed++;
+					this.enemyShipDangerous.destroy();
+					this.enemyShipdangerousExplosionCooldown.reset();
+					recyclable_boss.add(boss_bullet);
+				}
+
+				/*if (this.bossShip != null
+						&& !this.bossShip.isDestroyed()
+						&& checkCollision(boss_bullet, this.bossShip)) {
+					SoundPlay.getInstance().play(SoundType.bonusEnemyKill);
+					//this.score += this.bossShip.getPointValue();
+					this.shipsDestroyed++;
+					this.bossShip.destroy();
+					this.bossShipdangerousExplosionCooldown.reset();
+					recyclable_boss.add(boss_bullet);
+				}*/
+			}
+		this.boss_bullets.removeAll(recyclable_boss);
+		BulletPool.recycle_boss(recyclable_boss);
+	}
 	/**
 	 * Checks if two entities are colliding.
 	 *
