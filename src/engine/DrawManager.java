@@ -1120,4 +1120,11 @@ public final class DrawManager {
 				screen.getHeight() / 3 * 2 + fontRegularMetrics.getHeight() * 2);
 	}
 
+	public void drawStopScreen(final Screen screen, final String string,
+									  final int height) {
+		backBufferGraphics.setFont(fontBig);
+		backBufferGraphics.drawString(string, screen.getWidth() / 2
+				- fontBigMetrics.stringWidth(string) / 2, height);
+	}
+
 }

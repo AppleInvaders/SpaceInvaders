@@ -130,7 +130,7 @@ public final class Core {
 		GameState gameState;
 		PermanentState permanentState = PermanentState.getInstance();
 
-		gameState = new GameState(8, 0, MAX_LIVES, 0, 0);
+		gameState = new GameState(1, 0, MAX_LIVES, 0, 0);
 
 		int returnCode = 1;
 		do {

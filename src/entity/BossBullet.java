@@ -7,7 +7,7 @@ import engine.DrawManager.SpriteType;
 /**
  * Implements a bullet that moves vertically up or down.
  *
- * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
+ * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</
  *
  */
 public class BossBullet extends Entity {
