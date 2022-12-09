@@ -335,6 +335,11 @@ public class GameScreen extends Screen {
 
 		if (this.inputDelay.checkFinished() && !this.levelFinished) {
 
+			while(this.inputManager.isKeyDown(KeyEvent.VK_P)) {
+				drawManager.drawCenteredBigString(this, "Stop", this.getHeight() / 3);
+
+			}
+
 			if (!this.ship.isDestroyed()) {
 				this.moving();
 				this.shooting();
@@ -508,6 +513,7 @@ public class GameScreen extends Screen {
 
 		// Countdown to game start.
 		if (!this.inputDelay.checkFinished()) {
+
 			int countdown = (int) ((INPUT_DELAY
 					- (System.currentTimeMillis()
 					- this.gameStartTime))
